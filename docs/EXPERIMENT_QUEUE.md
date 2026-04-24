@@ -1,33 +1,41 @@
 # EXPERIMENT_QUEUE
 
 _Last updated: 2026-04-17_
+_Status: Defined, execution blocked until methodology + schema lock_
+
+## Stage Gate (Applies to all experiments)
+Do not run experiments until:
+- Methodology lock recorded.
+- Data schema lock recorded.
+- Pipeline scaffold + validation checks exist.
 
 ## Baseline Experiment Contract (E1)
 **Name:** Filing-date event study for clean sell events.
 
 ### Objective
-Estimate average abnormal return response around filing date for baseline clean sell sample.
+Estimate average abnormal return response around filing date for baseline clean-sell sample.
 
 ### Inputs (required)
-- Locked `METHODOLOGY.md` v1.x.
+- Locked `docs/METHODOLOGY.md`.
+- Locked `docs/DATA_DICTIONARY.md`.
 - `sell_events_processed` with `clean_sell_flag = true`.
-- Trading return data and market benchmark aligned to event panel.
-- Config specifying event windows and sample period.
+- Event-aligned return and benchmark data.
+- Config declaring sample period and event windows.
 
 ### Outputs (required)
-- Table: AR/CAR by event window with standard errors and confidence intervals.
-- Table: sample counts and attrition by filter step.
-- Figure: mean CAR path over event time.
-- Log: run metadata (config hash, timestamp, git commit).
+- AR/CAR summary table by window (SE/CI included).
+- Sample attrition table by filter step.
+- Mean CAR path figure over event time.
+- Run metadata log (config hash, timestamp, git commit).
 
-### Acceptance Criteria (go/no-go)
-1. Reproducibility: rerun with same config reproduces identical tables/figures.
-2. Data integrity: no duplicate `event_id`, no broken joins in event-return panel.
-3. Method compliance: event definition and windows match `METHODOLOGY.md`.
-4. Edge-case review completed against `ROBUSTNESS_CHECKLIST.md` minimum set.
-5. Interpretation note entered in `RESULTS_LOG.md` with limits and non-causal framing.
+### Acceptance Criteria (Go/No-Go)
+1. Reproducibility: identical outputs on rerun with identical config.
+2. Data integrity: no duplicate `event_id`; no broken event-return joins.
+3. Method compliance: windows/events match locked methodology.
+4. Edge-case minimum checks satisfied (`docs/ROBUSTNESS_CHECKLIST.md`).
+5. Interpretation note appended to `docs/RESULTS_LOG.md` with non-causal framing.
 
-## Planned Follow-On (Not Yet Approved)
+## Planned Follow-On (Not approved)
 - E2: Transaction-date timing decomposition.
 - E3: Benchmark robustness (market model / factor variants).
-- E4: Subsample heterogeneity (insider role, sell intensity, firm size).
+- E4: Subsample heterogeneity (role, intensity, size).
